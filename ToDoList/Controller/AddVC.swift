@@ -15,7 +15,7 @@ class AddVC: UIViewController {
     
     @IBOutlet weak var switchImportant: UISwitch!
     
-    var toDoTableVC : ToDoTableViewController?  = nil
+    //var toDoTableVC : ToDoTableViewController?  = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,14 +32,20 @@ class AddVC: UIViewController {
     }
     
     @IBAction func btnAdd(_ sender: UIButton) {
-        
-        let newToDo = ToDo()
-        if let name = textField.text{
-            newToDo.name = name
-            newToDo.important = switchImportant.isOn
-            toDoTableVC?.toDos.append(newToDo)
-            toDoTableVC?.tableView.reloadData()
-            navigationController?.popViewController(animated: true)
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext{
+            let newToDo = ToDoItem(context: context)
+            if let name = textField.text{
+                newToDo.name = name
+                newToDo.important = switchImportant.isOn
+                //toDoTableVC?.toDos.append(newToDo)
+                //toDoTableVC?.tableView.reloadData()
+                do{
+                    try context.save()
+                }catch let error {
+                    print(error)
+                }
+                navigationController?.popViewController(animated: true)
+            }
         }
         
     }

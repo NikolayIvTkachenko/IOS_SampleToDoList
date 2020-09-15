@@ -11,23 +11,40 @@ import UIKit
 class CompleteVC: UIViewController {
 
     @IBOutlet weak var recordText: UILabel!
-    var toDo = ToDo()
+    var toDo : ToDoItem? = nil
     
-    var toDoTableVC : ToDoTableViewController?  = nil
+    //var toDoTableVC : ToDoTableViewController?  = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if toDo.important {
-            recordText.text = " ‼️ " + toDo.name
-        }else{
-            recordText.text = toDo.name
+        
+        if toDo != nil {
+            if toDo!.important {
+                if let name = toDo?.name {
+                    recordText.text = " ‼️ " + name
+                }
+                
+            }else{
+                recordText.text = toDo!.name
+            }
         }
-        
-        
     }
     
     @IBAction func completeBtn(_ sender: Any) {
-        if let toDos = toDoTableVC?.toDos{
+        
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext{
+            if toDo != nil {
+                context.delete(toDo!)
+                do{
+                    try context.save()
+                }catch let error {
+                    print(error)
+                }
+                navigationController?.popViewController(animated: true)
+            }
+        }
+        
+        /*if let toDos = toDoTableVC?.toDos{
             var index = 0
             for x in toDos {
                 if x.name == toDo.name {
@@ -37,7 +54,7 @@ class CompleteVC: UIViewController {
                 }
                 index += 1
             }
-        }
+        }*/
         
     }
     
